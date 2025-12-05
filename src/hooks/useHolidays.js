@@ -15,7 +15,7 @@ export function useHolidays(year, countryCode) {
   const [holidays, setHolidays] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [refreshToggle, setRefreshToggle] = useState(false); // Para forzar un refetch
+  const setRefreshToggle = useState(false); // Para forzar un refetch
 
   // Función de llamada a la API con useCallback para estabilidad
   const fetchHolidays = useCallback(async () => {
@@ -39,7 +39,7 @@ export function useHolidays(year, countryCode) {
     } finally {
       setLoading(false);
     }
-  }, [year, countryCode, refreshToggle]); // Dependencias para reejecutar la llamada
+  }, [year, countryCode]); // Dependencias para reejecutar la llamada
 
   useEffect(() => {
     fetchHolidays();

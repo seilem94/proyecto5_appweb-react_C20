@@ -1,5 +1,5 @@
 // components/ErrorBoundary.jsx
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { Alert, Typography, Container } from '@mui/material';
 
 class ErrorBoundary extends Component {
@@ -9,7 +9,7 @@ class ErrorBoundary extends Component {
   }
 
   // Se llama después de que un componente hijo arroja un error
-  static getDerivedStateFromError(error) {
+  static getDerivedStateFromError() {
     // Actualiza el estado para que el próximo render muestre la UI de fallback
     return { hasError: true };
   }

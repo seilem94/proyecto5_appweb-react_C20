@@ -1,7 +1,6 @@
 // App.jsx
-import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import { AppBar, Toolbar, Typography, Container, Button } from '@mui/material';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Typography, Container } from '@mui/material';
 import Home from './components/Home';
 import ErrorBoundary from './components/ErrorBoundary';
 import MainLayout from './ui/MainLayout';
