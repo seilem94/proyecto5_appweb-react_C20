@@ -10,12 +10,10 @@ const BASE_URL = 'https://date.nager.at/api/v3/PublicHolidays';
  * @param {string} countryCode - El código del país.
  * @returns {object} { holidays, loading, error, refetch }
  */
-
 export function useHolidays(year, countryCode) {
   const [holidays, setHolidays] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const setRefreshToggle = useState(false); // Para forzar un refetch
 
   // Función de llamada a la API con useCallback para estabilidad
   const fetchHolidays = useCallback(async () => {
@@ -33,23 +31,26 @@ export function useHolidays(year, countryCode) {
       setHolidays(response.data);
     } catch (err) {
       console.error("Error al obtener los festivos:", err);
-      // Lanza un error para ser capturado por ErrorBoundary si es un error de renderizado
-      // Para errores de red, usamos el estado local `error`
-      setError(err.response?.data || "No se pudo obtener la lista de festivos.");
+      
+      // Manejar diferentes tipos de errores
+      if (err.response?.status === 404) {
+        setError("No se encontraron festivos para este país/año");
+      } else if (err.response?.status === 400) {
+        setError("Parámetros inválidos");
+      } else {
+        setError("No se pudo obtener la lista de festivos. Intenta nuevamente.");
+      }
+      
+      setHolidays([]);
     } finally {
       setLoading(false);
     }
-  }, [year, countryCode]); // Dependencias para reejecutar la llamada
+  }, [year, countryCode]); // Ahora refreshToggle está en las dependencias
 
   useEffect(() => {
     fetchHolidays();
-  }, [fetchHolidays]); // Se re-ejecuta cuando fetchHolidays cambia (cuando year o countryCode cambian)
+  }, [fetchHolidays]);
 
-  // Función que permite al componente de vista forzar una nueva llamada
-  const refetch = () => {
-    setRefreshToggle(prev => !prev);
-  };
 
-  // El Hook solo devuelve los datos necesarios
-  return { holidays, loading, error, refetch };
+  return { holidays, loading, error };
 }
