@@ -1,47 +1,78 @@
 // src/components/Home.jsx 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Box, CircularProgress, Alert } from '@mui/material';
-import { useHolidays } from '../hooks/useHolidays'; // Importar el Custom Hook
-import HolidaySearch from './HolidaySearch'; // Componente de formulario
-import HolidayList from './HolidayList'; // Componente de lista
+import { useHolidays } from '../hooks/useHolidays';
+import { useCountries } from '../hooks/useCountries';
+import HolidaySearch from './HolidaySearch';
+import HolidayList from './HolidayList';
+import HolidayExporter from './HolidayExporter';
 
 function Home() {
-    const [searchParams, setSearchParams] = useState({
+  const [searchParams, setSearchParams] = useState({
     year: new Date().getFullYear(),
     countryCode: 'CL',
   });
 
-    const { holidays, loading, error } = useHolidays(
+  const { holidays, loading, error } = useHolidays(
     searchParams.year,
     searchParams.countryCode
   );
+
+  const { countries } = useCountries();
 
   const handleSearch = (newYear, newCountryCode) => {
     setSearchParams({ year: newYear, countryCode: newCountryCode });
   };
 
+  // Obtener nombre del país actual
+  const getCountryName = () => {
+    const country = countries.find(c => c.code === searchParams.countryCode);
+    return country ? country.name : searchParams.countryCode;
+  };
+
   return (
     <Box>
-      {/* Pasar el manejador de eventos como prop */}
+      {/* Formulario de búsqueda */}
       <HolidaySearch
         initialYear={searchParams.year}
         initialCountryCode={searchParams.countryCode}
         onSearch={handleSearch}
       />
       
-      {/* Lógica de renderizado simple */}
-      {loading && <Box display="flex" justifyContent="center" mt={3}><CircularProgress /></Box>}
+      {/* Estado de carga */}
+      {loading && (
+        <Box display="flex" justifyContent="center" mt={3}>
+          <CircularProgress />
+        </Box>
+      )}
       
-      {error && <Alert severity="error" sx={{ mt: 3 }}>Error: {error}</Alert>}
+      {/* Mensajes de error */}
+      {error && (
+        <Alert severity="error" sx={{ mt: 3 }}>
+          Error: {error}
+        </Alert>
+      )}
       
+      {/* Resultados */}
       {!loading && !error && (
-        holidays.length > 0 ? (
-          <HolidayList holidays={holidays} />
-        ) : (
-          <Alert severity="info" sx={{ mt: 3 }}>
-            No se encontraron festivos para los parámetros seleccionados o el país no está soportado.
-          </Alert>
-        )
+        <>
+          {holidays.length > 0 ? (
+            <>
+              <HolidayList holidays={holidays} />
+              
+              {/* Exportador - Solo se muestra si hay resultados */}
+              <HolidayExporter 
+                holidays={holidays}
+                countryName={getCountryName()}
+                year={searchParams.year}
+              />
+            </>
+          ) : (
+            <Alert severity="info" sx={{ mt: 3 }}>
+              No se encontraron festivos para los parámetros seleccionados o el país no está soportado.
+            </Alert>
+          )}
+        </>
       )}
     </Box>
   );
