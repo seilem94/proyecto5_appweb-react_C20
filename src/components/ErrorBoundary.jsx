@@ -1,6 +1,6 @@
 // components/ErrorBoundary.jsx
-import { Component } from 'react';
-import { Alert, Typography, Container } from '@mui/material';
+import { Component } from "react";
+import { Alert, Typography, Container } from "@mui/material";
 
 class ErrorBoundary extends Component {
   constructor(props) {
@@ -28,7 +28,8 @@ class ErrorBoundary extends Component {
           <Alert severity="error" sx={{ mb: 2 }}>
             <Typography variant="h6">¡Ups! Algo salió mal.</Typography>
             <Typography>
-              Ha ocurrido un error inesperado en la interfaz de usuario. Por favor, recarga la página.
+              Ha ocurrido un error inesperado en la interfaz de usuario. Por
+              favor, recarga la página.
             </Typography>
           </Alert>
         </Container>
